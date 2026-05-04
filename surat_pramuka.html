@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generator Surat Pramuka Otomatis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Roboto+Slab:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5;
+        }
+
+        .paper-preview {
+            font-family: 'Times New Roman', Times, serif; /* Standar surat organisasi */
+            background: white;
+            width: 210mm;
+            min-height: 297mm;
+            padding: 20mm 25mm;
+            margin: auto;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            color: black;
+            line-height: 1.4;
+            position: relative;
+        }
+
+        .pramuka-header {
+            display: flex;
+            align-items: center;
+            border-bottom: 4px double black;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .logo-placeholder {
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px dashed #ccc;
+            margin-right: 20px;
+        }
+
+        @media print {
+            body { background: white; padding: 0; margin: 0; }
+            .no-print { display: none; }
+            .paper-preview { 
+                box-shadow: none; 
+                margin: 0; 
+                width: 100%;
+                padding: 15mm;
+            }
+        }
+
+        .input-group {
+            @apply mb-4 p-3 bg-gray-50 rounded-lg border border-gray-200;
+        }
+
+        .input-field {
+            @apply w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-amber-600 focus:outline-none mb-2 text-sm;
+        }
+
+        .label-text {
+            @apply block text-xs font-bold text-amber-800 mb-1 uppercase;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-6">
+
+    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Panel Kontrol (Kiri) -->
+        <div class="lg:col-span-4 no-print space-y-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border-t-4 border-amber-600">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="p-2 bg-amber-100 rounded-lg text-amber-700">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                        </svg>
+                    </div>
+                    <h1 class="text-xl font-bold text-gray-800">PramukaSheet v1.0</h1>
+                </div>
+
+                <div class="input-group">
+                    <label class="label-text">Template Surat</label>
+                    <select id="templateType" class="input-field bg-white" onchange="applyTemplate()">
+                        <option value="umum">Surat Keterangan Umum</option>
+                        <option value="izin">Surat Izin Orang Tua</option>
+                        <option value="mandat">Surat Mandat Tugas</option>
+                        <option value="undangan">Surat Undangan Rapat</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <p class="label-text border-b mb-3">Identitas Gugus Depan</p>
+                    <label class="label-text">Nama Ambalan / Gudep</label>
+                    <input type="text" id="gudepName" class="input-field" placeholder="Gugus Depan 09.01 - 09.02" oninput="render()">
+                    <label class="label-text">Pangkalan</label>
+                    <input type="text" id="pangkalan" class="input-field" placeholder="SMA Negeri 1 Jakarta" oninput="render()">
+                    <label class="label-text">Alamat</label>
+                    <input type="text" id="alamatGudep" class="input-field" placeholder="Jl. Merdeka No. 45" oninput="render()">
+                </div>
+
+                <div class="input-group">
+                    <p class="label-text border-b mb-3">Detail Surat</p>
+                    <label class="label-text">Nomor Surat</label>
+                    <input type="text" id="noSurat" class="input-field" placeholder="001/09.01.05-B" oninput="render()">
+                    <label class="label-text">Perihal</label>
+                    <input type="text" id="perihal" class="input-field" placeholder="Permohonan Izin Kegiatan" oninput="render()">
+                    <label class="label-text">Isi Surat</label>
+                    <textarea id="isiSurat" class="input-field h-32" oninput="render()"></textarea>
+                </div>
+
+                <div class="input-group">
+                    <p class="label-text border-b mb-3">Penanda Tangan</p>
+                    <label class="label-text">Jabatan</label>
+                    <input type="text" id="jabatan" class="input-field" placeholder="Pembina Satuan" oninput="render()">
+                    <label class="label-text">Nama Lengkap</label>
+                    <input type="text" id="namaTtd" class="input-field" placeholder="Kak Ahmad Sopian" oninput="render()">
+                    <label class="label-text">NTA / NIP</label>
+                    <input type="text" id="ntaTtd" class="input-field" placeholder="NTA. 12345678" oninput="render()">
+                </div>
+
+                <button onclick="window.print()" class="w-full bg-amber-700 hover:bg-amber-800 text-white font-bold py-3 rounded-xl transition flex justify-center items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M5 4v3H4a2 2 0 00-2 2v3a2 2 0 002 2h1v2a2 2 0 002 2h6a2 2 0 002-2v-2h1a2 2 0 002-2V9a2 2 0 00-2-2h-1V4a2 2 0 00-2-2H7a2 2 0 00-2 2zm8 0H7v3h6V4zM7 11a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
+                    </svg>
+                    Cetak Surat (PDF)
+                </button>
+            </div>
+        </div>
+
+        <!-- Preview (Kanan) -->
+        <div class="lg:col-span-8 bg-gray-300 p-4 md:p-8 rounded-2xl overflow-y-auto">
+            <div id="printArea" class="paper-preview">
+                <!-- Konten Surat -->
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const templates = {
+            umum: "Diberitahukan kepada seluruh anggota Gerakan Pramuka Gugus Depan tersebut di atas, bahwa dalam rangka meningkatkan keterampilan anggota, kami akan menyelenggarakan latihan rutin tambahan yang akan dilaksanakan pada...",
+            izin: "Saya yang bertanda tangan di bawah ini, orang tua/wali dari:\n\nNama: ....................\nKelas: ....................\n\nMenyatakan bersedia memberikan izin kepada putra/putri kami untuk mengikuti kegiatan [Nama Kegiatan] yang akan dilaksanakan pada tanggal [Tanggal] berlokasi di [Tempat].",
+            mandat: "Memberikan mandat kepada nama-nama tersebut di bawah ini:\n\n1. ....................\n2. ....................\n\nUntuk mewakili Gugus Depan dalam kegiatan [Nama Acara] yang diselenggarakan oleh [Penyelenggara] pada tanggal [Tanggal].",
+            undangan: "Mengharap kehadiran Kakak-kakak Pembina dan Dewan Ambalan dalam rapat koordinasi persiapan Persami yang akan dilaksanakan pada:\n\nHari/Tgl: ....................\nWaktu: ....................\nTempat: Sanggar Pramuka"
+        };
+
+        function applyTemplate() {
+            const type = document.getElementById('templateType').value;
+            document.getElementById('isiSurat').value = templates[type];
+            render();
+        }
+
+        function render() {
+            const gudep = document.getElementById('gudepName').value || 'GERAKAN PRAMUKA GUGUS DEPAN';
+            const pangkalan = document.getElementById('pangkalan').value || 'PANGKALAN SEKOLAH';
+            const alamat = document.getElementById('alamatGudep').value || 'Jl. Alamat Lengkap No. 00, Kota/Kabupaten';
+            const no = document.getElementById('noSurat').value || '.../09.01.05-B';
+            const perihal = document.getElementById('perihal').value || 'Perihal Surat';
+            const isi = document.getElementById('isiSurat').value;
+            const jabatan = document.getElementById('jabatan').value || 'Pembina Gudep';
+            const nama = document.getElementById('namaTtd').value || '[Nama Lengkap]';
+            const nta = document.getElementById('ntaTtd').value || 'NTA. .................';
+
+            const today = new Date();
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            const tglString = today.toLocaleDateString('id-ID', options);
+
+            let html = `
+                <div class="pramuka-header">
+                    <div class="logo-placeholder">
+                        <span class="text-[10px] text-center">Logo Cikal/ WOSM</span>
+                    </div>
+                    <div class="flex-1 text-center">
+                        <h2 class="text-lg font-bold">GERAKAN PRAMUKA</h2>
+                        <h2 class="text-xl font-bold uppercase">${gudep}</h2>
+                        <h3 class="text-lg font-bold uppercase">${pangkalan}</h3>
+                        <p class="text-xs italic">${alamat}</p>
+                    </div>
+                    <div class="w-[80px]"></div> <!-- Spacer -->
+                </div>
+
+                <div class="flex justify-between mb-8">
+                    <div>
+                        <p>Nomor : ${no}</p>
+                        <p>Lamp : -</p>
+                        <p>Hal : <strong>${perihal}</strong></p>
+                    </div>
+                    <div class="text-right">
+                        <p>${tglString}</p>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <p>Yth. Kakak/Bapak/Ibu ....................</p>
+                    <p>di Tempat</p>
+                </div>
+
+                <p class="mb-4 italic">Salam Pramuka,</p>
+
+                <div class="text-justify whitespace-pre-wrap min-h-[300px]">
+                    ${isi || 'Tuliskan isi surat Anda...'}
+                </div>
+
+                <div class="mt-12 flex justify-end">
+                    <div class="text-center w-64">
+                        <p>${jabatan},</p>
+                        <div class="h-20"></div> <!-- Ruang Tanda Tangan -->
+                        <p class="font-bold underline">${nama}</p>
+                        <p>${nta}</p>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('printArea').innerHTML = html;
+        }
+
+        window.onload = () => {
+            applyTemplate();
+        };
+    </script>
+</body>
+</html>
