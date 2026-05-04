@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Untuk Saskia Tersayang</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@300;500&display=swap');
+
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: linear-gradient(to bottom, #ff9a9e 0%, #fad0c4 100%);
+            font-family: 'Quicksand', sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .heart {
+            position: absolute;
+            top: -10%;
+            user-select: none;
+            pointer-events: none;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(110vh) rotate(360deg);
+            }
+        }
+
+        .container {
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+            max-width: 90%;
+            animation: fadeIn 2s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 4rem;
+            color: #d63384;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 1rem;
+        }
+
+        p {
+            font-size: 1.2rem;
+            color: #4a4a4a;
+            line-height: 1.6;
+        }
+
+        .main-heart {
+            color: #e25555;
+            font-size: 5rem;
+            animation: beat 1s infinite alternate;
+            display: inline-block;
+            margin: 1rem 0;
+        }
+
+        @keyframes beat {
+            to { transform: scale(1.2); }
+        }
+
+        .btn-music {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #d63384;
+            color: white;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: 0.3s;
+            border: none;
+            font-weight: bold;
+        }
+
+        .btn-music:hover {
+            background: #b82a6f;
+            transform: translateY(-3px);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Halo, Saskia!</h1>
+        <div class="main-heart">❤</div>
+        <p>Setiap detik yang berlalu,<br>hanya ada kamu di pikiranku.</p>
+        <p class="font-bold mt-4 italic">"You are my favorite notification."</p>
+        
+        <!-- Tombol interaktif untuk memicu suara atau sekadar hiasan -->
+        <button class="btn-music" onclick="showMessage()">Klik Untukmu</button>
+        <div id="extraMessage" class="hidden mt-4 text-pink-600 font-bold transition-all duration-500">
+            Aku Sayang Kamu Selamanya! 🌹
+        </div>
+    </div>
+
+    <script>
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            
+            // Variasi bentuk hati (menggunakan entitas HTML atau SVG)
+            heart.innerHTML = '❤';
+            
+            // Posisi acak
+            heart.style.left = Math.random() * 100 + "vw";
+            
+            // Ukuran acak
+            const size = Math.random() * 20 + 10 + "px";
+            heart.style.fontSize = size;
+            
+            // Durasi jatuh acak
+            const duration = Math.random() * 3 + 2 + "s";
+            heart.style.animationDuration = duration;
+            
+            // Warna acak sedikit
+            const colors = ['#ff4d4d', '#ff758c', '#ff85e4', '#ffffff'];
+            heart.style.color = colors[Math.floor(Math.random() * colors.length)];
+            
+            // Transparansi acak
+            heart.style.opacity = Math.random();
+
+            document.body.appendChild(heart);
+
+            // Hapus elemen setelah animasi selesai agar tidak membebani memori
+            setTimeout(() => {
+                heart.remove();
+            }, 5000);
+        }
+
+        // Jalankan pembuat hati secara berkala
+        setInterval(createHeart, 300);
+
+        function showMessage() {
+            const msg = document.getElementById('extraMessage');
+            msg.classList.remove('hidden');
+            msg.classList.add('animate-bounce');
+        }
+    </script>
+</body>
+</html>
